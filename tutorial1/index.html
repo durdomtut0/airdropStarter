@@ -12,11 +12,13 @@
 </head>
 <body>
     <div>
-        <h1>Simple Note dapp</h1>
-        <p>Write a note:</p>
-        <input type="text" id ="inputNote"/>
-        <button onclick="writeNote()">Set Text</button>
-        <button onclick="getNote()">Get Text</button>
+        <h1>Airdrop DAPP</h1>
+        <p>ADD addresses to airdrop tokens:</p>
+        
+        <input type="text" id ="addresses" name="string_array[]"/>
+        <button onclick="airdropTokensWithTransfer()">Airdrop tokens by TRANSFER</button>
+        <button onclick="getBalance()">Get Balance</button>
+        <p>ERC20 token Balance: <span id = "ERC20Balance"></p>
     </div>
 </body>
 </html>
