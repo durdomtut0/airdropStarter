@@ -278,17 +278,12 @@ async function getBalance(){
 
 async function airdropTokensWithTransfer(){
     //const addresses = document.getElementById("addresses").value;
-    let inputElements = document.getElementsByName("string_array[]");
+    let inputElements = document.getElementById("addresses").value;
 
-    //let inputArray = inputElements.value.split(', ');
-    //console.log(inputArray);
 
-    let inputValues = [];
-    for (let i = 0; i < inputElements.length; i++) {
-        inputValues.push(inputElements[i].value);
-    }
-    console.log(inputElements);
-    console.log(inputValues);
-    await contractAirdrop.airdropTokensWithTransfer(inputValues);
+    let inputArray = inputElements.split(',');
+    console.log(inputArray);
+
+    await contractAirdrop.airdropTokensWithTransfer(inputArray);
 }
 
