@@ -279,8 +279,6 @@ async function getBalance(){
 async function airdropTokensWithTransfer(){
     //const addresses = document.getElementById("addresses").value;
     let inputElements = document.getElementById("addresses").value;
-
-
     let inputArray = inputElements.split(',');
     console.log(inputArray);
 
