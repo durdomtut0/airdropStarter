@@ -13,9 +13,12 @@
 <body>
     <div>
         <h1>Airdrop DAPP</h1>
-        <p>ADD addresses to airdrop tokens:</p>
-        
-        <input type="text" id ="addresses" />
+        <p>Token you want to Airdrop</p>
+        <input type="text" id ="tokenAddress" />
+        <p>ADD addresses:</p>
+        <input type="text" id ="arrayOfReceivers" />
+        <p>ADD token amounts:</p>
+        <input type="text" id ="arrayOfAmounts" />
         <button onclick="airdropTokensWithTransfer()">Airdrop tokens by TRANSFER</button>
         <button onclick="getBalance()">Get Balance</button>
         <p>ERC20 token Balance: <span id = "ERC20Balance"></p>
