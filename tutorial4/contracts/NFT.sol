@@ -13,7 +13,7 @@ contract NFT is ERC721Enumerable, Ownable {
     
     uint256 maxSupply = 1000;
     uint256 cost = 0.001 ether;
-    string baseURI = "https://raw.githubusercontent.com/durdomtut0/NFT-metadata/main/metadata/";
+    string baseURI = "https://raw.githubusercontent.com/durdomtut0/airdropStarter/main/NFT-data/metadata/";//"https://raw.githubusercontent.com/durdomtut0/NFT-metadata/main/metadata/";
 
     constructor() ERC721("Bunnies", "NFT") {}
 
@@ -47,11 +47,8 @@ contract NFT is ERC721Enumerable, Ownable {
         //
         //payable(msg.sender).transfer(address(this).balance);
         //(bool os, ) = payable(owner()).call{value: address(this).balance}(""); require(os);
-        
         (bool success, ) = payable(msg.sender).call{value: address(this).balance}("");
         require(success);
-   
     }
-
 
 }
