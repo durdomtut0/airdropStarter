@@ -9,8 +9,9 @@ async function main() {
   await token.deployed();
 
   console.log(owner.address)
-  await token.safeMint(owner.address, 0);
-
+  await token.safeMint(owner.address,  {value: ethers.utils.parseEther("0.001")});
+  await token.safeMint(owner.address,  {value: ethers.utils.parseEther("0.001")});
+  
   console.log(
     `Deployed token address: ${token.address}`
   );
