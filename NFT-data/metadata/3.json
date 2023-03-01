@@ -1,0 +1,19 @@
+{
+    "description": "AI generated images of students ", 
+    "image": "https://raw.githubusercontent.com/durdomtut0/airdropStarter/main/NFT-data/images/0.png", 
+    "name": "Student studying #0",
+    "attributes": [
+    {
+        "trait_type": "Base", 
+        "value": "Starfish"
+    }, 
+    {
+        "trait_type": "Eyes", 
+        "value": "Big"
+    },  
+    {
+        "trait_type": "Level", 
+        "value": 5
+    }]
+
+}
