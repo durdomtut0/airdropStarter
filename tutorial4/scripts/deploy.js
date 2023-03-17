@@ -11,10 +11,27 @@ async function main() {
   console.log(owner.address)
   await token.safeMint(owner.address,  {value: ethers.utils.parseEther("0.001")});
   await token.safeMint(owner.address,  {value: ethers.utils.parseEther("0.001")});
-  
+
   console.log(
     `Deployed token address: ${token.address}`
   );
+
+  
+  
+  const WAIT_BLOCK_CONFIRMATIONS = 6;
+  await token.deployTransaction.wait(WAIT_BLOCK_CONFIRMATIONS);
+
+  console.log(`Contract deployed to ${token.address} on ${network.name}`);
+
+  console.log(`Verifying contract on Etherscan...`);
+
+  await run(`verify:verify`, {
+    address: token.address,
+    constructorArguments: [],
+  });
+
+
+
 }
 
 // We recommend this pattern to be able to use async/await everywhere
