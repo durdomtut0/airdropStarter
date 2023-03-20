@@ -8,7 +8,7 @@ import NFTList from "./NFTList";
 
 export default function App() {
   const [walletConnected, setWalletConnected] = useState(false);
-  const [nfts, setNfts] = useState(null);
+  const [nfts, setNfts] = useState([]);
 
   const web3ModalRef = useRef();
 
@@ -65,56 +65,56 @@ export default function App() {
         }
       }
       console.log(tempNftArray);
-      const tx = await nftContract.tokenURI(0);
 
-      let txProcced;
+      let processedNftArray = [];
 
-      //ipfs://QmYpyqM7q7fw2vAy87e4Gyag1QnbX9AmQmcmwsmq9Wu2Ji/0.json
-      //https://gateway.pinata.cloud/ipfs/QmYpyqM7q7fw2vAy87e4Gyag1QnbX9AmQmcmwsmq9Wu2Ji/0.json
-      if (tx.includes("ipfs")) {
-        txProcced = "https://gateway.pinata.cloud/ipfs/".concat(tx.slice(7));
-      }
+      tempNftArray.map(async (e) => {
+        if (e.includes("ipfs")) {
+          e = "https://gateway.pinata.cloud/ipfs/".concat(e.slice(7));
+        }
+        const response = await fetch(e);
+        const json = await response.json();
+        if (json.image.includes("ipfs")) {
+          json.image = "https://gateway.pinata.cloud/ipfs/".concat(
+            json.image.slice(7)
+          );
+        }
+        processedNftArray.push(json);
+        console.log(JSON.stringify(json));
+      });
+      console.log("preprocessed NFTs metadta:", processedNftArray);
 
-      const response = await fetch(txProcced);
-      const json = await response.json();
-
-      if (json.image.includes("ipfs")) {
-        json.image = "https://gateway.pinata.cloud/ipfs/".concat(
-          json.image.slice(7)
-        );
-      }
-
-      console.log(JSON.stringify(json));
-
-      setNfts(json);
-
-      console.log(nfts);
-
-      console.log(tx);
+      setNfts(processedNftArray);
+      displayNFTs();
     } catch (error) {
       console.error(error);
     }
   };
 
   const displayNFTs = () => {
-    if (nfts) {
+    console.log(nfts.length);
+    if (true) {
       return (
         <>
-          {<img src={nfts.image} width={200} />}
-          <br />
-          <span>Name: {nfts.name}, </span>
-          <br />
-          <span>Description: {nfts.description}</span>
-          <br />
+          <div>
+            <div></div>
+            {getNFTs}
+            <button onClick={getNFTs}>get NFTs</button>
+          </div>
+
+          {nfts.map((e) => {
+            return (
+              <>
+                {<img src={e.image} width={200} />}
+                <br />
+                <span>Name: {e.name}, </span>
+                <br />
+                <span>Description: {e.description}</span>
+                <br />
+              </>
+            );
+          })}
         </>
-      );
-    } else {
-      return (
-        <div>
-          <div></div>
-          {getNFTs}
-          <button onClick={getNFTs}>get NFTs</button>
-        </div>
       );
     }
   };
@@ -147,7 +147,9 @@ export default function App() {
     }
   };
 
-  useEffect(() => {}, [nfts]);
+  useEffect(() => {
+    displayNFTs();
+  }, [nfts]);
 
   useEffect(() => {
     if (!walletConnected) {
@@ -157,6 +159,7 @@ export default function App() {
         disableInjectedProvider: false,
       });
       connectWallet();
+      displayNFTs();
     }
   }, [walletConnected]);
 
