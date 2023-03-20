@@ -52,6 +52,19 @@ export default function App() {
       const nftContract = new Contract(NFT_CONTRACT_ADDRESS, abi, signer);
       const address = await signer.getAddress();
       //const tx = await nftContract.balanceOf(address);
+      let tempNftArray = [];
+
+      for (let index = 0; index < 100000; index++) {
+        try {
+          const tokenURI = await nftContract.tokenURI(index);
+          if (tokenURI) {
+            tempNftArray.push(tokenURI);
+          }
+        } catch (error) {
+          break;
+        }
+      }
+      console.log(tempNftArray);
       const tx = await nftContract.tokenURI(0);
 
       let txProcced;
@@ -64,9 +77,16 @@ export default function App() {
 
       const response = await fetch(txProcced);
       const json = await response.json();
+
+      if (json.image.includes("ipfs")) {
+        json.image = "https://gateway.pinata.cloud/ipfs/".concat(
+          json.image.slice(7)
+        );
+      }
+
       console.log(JSON.stringify(json));
 
-      setNfts(JSON.stringify(json));
+      setNfts(json);
 
       console.log(nfts);
 
@@ -78,7 +98,16 @@ export default function App() {
 
   const displayNFTs = () => {
     if (nfts) {
-      return <div>{nfts}</div>;
+      return (
+        <>
+          {<img src={nfts.image} width={200} />}
+          <br />
+          <span>Name: {nfts.name}, </span>
+          <br />
+          <span>Description: {nfts.description}</span>
+          <br />
+        </>
+      );
     } else {
       return (
         <div>
@@ -117,6 +146,8 @@ export default function App() {
       );
     }
   };
+
+  useEffect(() => {}, [nfts]);
 
   useEffect(() => {
     if (!walletConnected) {
