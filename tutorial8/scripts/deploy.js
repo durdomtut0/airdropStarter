@@ -9,11 +9,14 @@ async function main() {
   const TOKEN = await ethers.getContractFactory("Token");
   const token = await TOKEN.deploy();
   await token.deployed();
+  //dfklklksdsldk
+
   console.log(`token address ${token.address}`);
 
   const NFTStaking = await ethers.getContractFactory("NFTStaking");
   const nftStaking = await NFTStaking.deploy(nft.address, token.address);
   await nftStaking.deployed();
+
   console.log(`nftStaking address ${nftStaking.address}`);
 
   const mint = await nft.mint();

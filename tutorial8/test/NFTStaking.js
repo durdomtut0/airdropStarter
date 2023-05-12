@@ -8,7 +8,7 @@ const { expect } = require("chai");
 describe("NFTStaking", function () {
   async function deployContractsFixture() {
     // Contracts are deployed using the first signer/account by default
-    const [owner, otherAccount] = await ethers.getSigners();
+    const [owner, otherAccount] = await eth; //ers.getSigners();
 
     const Token = await ethers.getContractFactory("Token");
     const token = await Token.deploy();
