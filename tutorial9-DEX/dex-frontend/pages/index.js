@@ -6,6 +6,8 @@ import styles from "@/styles/Home.module.css";
 import Web3Modal from "web3modal";
 import { BigNumber, providers, utils } from "ethers";
 import { addLiquidity, calculateToken } from "@/utils/addLiquidity";
+import { removeLiquidity, getTokensAfterRemove } from "@/utils/removeLiquidity";
+import { swapTokens, getAmountOfTokensReceivedFromSwap } from "@/utils/swap";
 
 import {
   getTokensBalance,
@@ -13,6 +15,7 @@ import {
   getLPTokensBalance,
   getReserveOfTokens,
 } from "../utils/getAmounts";
+
 import React, { useEffect, useRef, useState } from "react";
 
 export default function Home() {
@@ -26,6 +29,13 @@ export default function Home() {
   const [lpBalance, setLPBalance] = useState(zero);
   const [addEther, setAddEther] = useState(zero);
   const [addTokens, setAddTokens] = useState(zero);
+  const [removeEther, setRemoveEther] = useState(zero);
+  const [removeToken, setRemoveToken] = useState(zero);
+  const [removeLPTokens, setRemoveLPTokens] = useState("0");
+  const [swapAmount, setSwapAmount] = useState("");
+  const [tokenToBeReceivedAfterSwap, settokenToBeReceivedAfterSwap] =
+    useState(zero);
+  const [ethSelected, setEthSelected] = useState(true);
 
   const web3ModalRef = useRef();
   // walletConnected keep track of whether the user's wallet is connected or not
@@ -121,6 +131,43 @@ export default function Home() {
     }
   };
 
+  const _removeLiquidity = async () => {
+    try {
+      const signer = await getProviderOrSigner(true);
+      const removeLPTokensWei = utils.parseEther(removeLPTokens);
+      setLoading(true);
+      await removeLiquidity(signer, removeLPTokens);
+      setLoading(false);
+      await getAmounts();
+      setRemoveToken(zero);
+      setRemoveEther(zero);
+    } catch (error) {
+      console.error(error);
+      setLoading(false);
+      setRemoveToken(zero);
+      setRemoveEther(zero);
+    }
+  };
+
+  const _getTokensAfterRemove = async (_removeLPTokens) => {
+    try {
+      const provider = await getProviderOrSigner();
+      const removeLPTokensWei = utils.parseEther(_removeLPTokens);
+      const _ethBalance = await getEtherBalance(provider, null, true);
+      const tokenReserve = await getReserveOfTokens(provider);
+      const { _removeEther, _removeToken } = await getTokensAfterRemove(
+        provider,
+        removeLPTokensWei,
+        _ethBalance,
+        tokenReserve
+      );
+      setRemoveToken(_removeEther);
+      setRemoveEther(_removeToken);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   useEffect(() => {
     // if wallet is not connected, create a new instance of Web3Modal and connect the MetaMask wallet
     if (!walletConnected) {
@@ -208,6 +255,25 @@ export default function Home() {
                 </button>
               </div>
             )}
+          </div>
+          {/*Remove Liquidity */}
+          <div>
+            <input
+              type="number"
+              placeholder="amount of LP tokens"
+              onChange={async (e) => {
+                setRemoveLPTokens(e.target.value, "0");
+                await _getTokensAfterRemove(e.target.value || "0");
+              }}
+              className={styles.input}
+            />
+            <div className={styles.inputDiv}>
+              {`You will get ${utils.formatEther(removeToken)} Tokens
+             and ${utils.formatEther(removeEther)} BNB`}
+              <button className={styles.button1} onClick={_removeLiquidity}>
+                Remove LP
+              </button>
+            </div>
           </div>
         </div>
       );

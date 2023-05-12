@@ -23,11 +23,12 @@ async function main() {
   console.log("Factory Contract Address:", FactoryContract.address);
 
   const exchangeCreated = await FactoryContract.createExchange(tokenAddress);
-  exchangeCreated.wait(5);
+  await exchangeCreated.wait(10);
   console.log(
     "Exchange Contract Address:",
     await FactoryContract.getExchange(tokenAddress)
   );
+  //0x2a7c02E933CC64c3474362e1425261154bcD53a7
 }
 
 // Call the main function and catch if there is any error

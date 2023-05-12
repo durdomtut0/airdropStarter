@@ -35,8 +35,11 @@ contract Exchange is ERC20 {
                 _amount >= tokenAmount,
                 "Amount of tokens sent is less than the minimum tokens required"
             );
+            token.transferFrom(msg.sender, address(this), tokenAmount);
             liquidity = (totalSupply() * msg.value) / ethReserve;
+            _mint(msg.sender, liquidity);
         }
+
         return liquidity;
     }
 
@@ -73,7 +76,7 @@ contract Exchange is ERC20 {
             msg.value,
             address(this).balance - msg.value,
             tokenReserve
-        );
+        ); //slippage 1%
         require(tokensBought >= _minTokens, "insufficient output amount");
         ERC20(tokenAddress).transfer(msg.sender, tokensBought);
     }

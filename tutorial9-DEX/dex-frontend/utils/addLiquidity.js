@@ -32,7 +32,7 @@ export const addLiquidity = async (
     console.log("allowance: ", utils.formatEther(BigNumber.from(tx)));
     console.log("addTokenAmountWei: ", utils.formatEther(addTokenAmountWei));
 
-    if (addTokenAmountWei < tx) {
+    if (addTokenAmountWei > tx) {
       tx = await tokenContract.approve(
         EXCHANGE_CONTRACT_ADDRESS,
         addTokenAmountWei.toString()
