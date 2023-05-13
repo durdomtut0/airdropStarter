@@ -37,6 +37,7 @@ export default function Home() {
     useState(zero);
   const [ethSelected, setEthSelected] = useState(true);
 
+  
   const web3ModalRef = useRef();
   // walletConnected keep track of whether the user's wallet is connected or not
   const [walletConnected, setWalletConnected] = useState(false);

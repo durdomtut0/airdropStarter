@@ -34,6 +34,7 @@ export const getTokensBalance = async (provider, address) => {
   }
 };
 
+
 export const getLPTokensBalance = async (provider, address) => {
   try {
     const exchangeContract = new Contract(
