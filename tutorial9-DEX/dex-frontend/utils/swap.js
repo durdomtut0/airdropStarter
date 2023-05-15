@@ -1,12 +1,10 @@
-import { Contract } from "ethers";
+import { BigNumber, utils, Contract } from "ethers";
 import {
   EXCHANGE_CONTRACT_ABI,
   EXCHANGE_CONTRACT_ADDRESS,
   TOKEN_CONTRACT_ABI,
   TOKEN_CONTRACT_ADDRESS,
 } from "../constants";
-
-
 
 export const getAmountOfTokensReceivedFromSwap = async (
   _swapAmountWei,
@@ -22,13 +20,13 @@ export const getAmountOfTokensReceivedFromSwap = async (
   );
   let amountOfTokens; //amount of tokens received
   if (ethSelected) {
-    amountOfTokens = await exchangeContract.getAmountOfTokens(
+    amountOfTokens = await exchangeContract.getAmountOfToken(
       _swapAmountWei,
       ethBalance,
       resevedToken
     );
   } else {
-    amountOfTokens = await exchangeContract.getAmountOfTokens(
+    amountOfTokens = await exchangeContract.getAmountOfToken(
       _swapAmountWei,
       resevedToken,
       ethBalance
@@ -36,8 +34,6 @@ export const getAmountOfTokensReceivedFromSwap = async (
   }
   return amountOfTokens;
 };
-
-
 
 export const swapTokens = async (
   signer,
@@ -66,9 +62,9 @@ export const swapTokens = async (
       EXCHANGE_CONTRACT_ADDRESS
     );
     console.log("allowance: ", utils.formatEther(BigNumber.from(tx)));
-    console.log("addTokenAmountWei: ", utils.formatEther(addTokenAmountWei));
+    console.log("swapAmountWei: ", utils.formatEther(swapAmountWei));
 
-    if (addTokenAmountWei > tx) {
+    if (swapAmountWei > tx) {
       tx = await tokenContract.approve(
         EXCHANGE_CONTRACT_ADDRESS,
         swapAmountWei.toString()

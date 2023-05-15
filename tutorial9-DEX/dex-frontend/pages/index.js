@@ -37,15 +37,16 @@ export default function Home() {
     useState(zero);
   const [ethSelected, setEthSelected] = useState(true);
 
-  
   const web3ModalRef = useRef();
   // walletConnected keep track of whether the user's wallet is connected or not
   const [walletConnected, setWalletConnected] = useState(false);
 
   const getAmounts = async () => {
     try {
+      //to improve speed use indexing (the graph)
       const provider = await getProviderOrSigner(false);
       const signer = await getProviderOrSigner(true);
+
       const address = await signer.getAddress();
       // get the amount of eth in the user's account
       const _ethBalance = await getEtherBalance(provider, address);
@@ -111,6 +112,7 @@ export default function Home() {
     try {
       // Convert the ether amount entered by the user to Bignumber
       const addEtherWei = utils.parseEther(addEther.toString());
+
       // Check if the values are zero
       if (!addTokens.eq(zero) && !addEtherWei.eq(zero)) {
         const signer = await getProviderOrSigner(true);
@@ -137,7 +139,7 @@ export default function Home() {
       const signer = await getProviderOrSigner(true);
       const removeLPTokensWei = utils.parseEther(removeLPTokens);
       setLoading(true);
-      await removeLiquidity(signer, removeLPTokens);
+      await removeLiquidity(signer, removeLPTokensWei);
       setLoading(false);
       await getAmounts();
       setRemoveToken(zero);
@@ -168,6 +170,54 @@ export default function Home() {
       console.error(error);
     }
   };
+
+  const _swapTokens = async () => {
+    try {
+      const swapTokensWei = utils.parseEther(swapAmount);
+      if (!swapTokensWei.eq(zero)) {
+        const signer = await getProviderOrSigner(true);
+        setLoading(true);
+        await swapTokens(
+          signer,
+          swapTokensWei,
+          tokenToBeReceivedAfterSwap,
+          ethSelected
+        );
+        setLoading(false);
+        await getAmounts();
+        setSwapAmount("");
+      }
+    } catch (error) {
+      console.error(error);
+      setLoading(false);
+      setSwapAmount("");
+    }
+  };
+
+  const _getAmountOfTokensReceivedFromSwap = async (_swapAmount) => {
+    try {
+      const swapAmountWei = utils.parseEther(_swapAmount.toString());
+      if(!swapAmountWei.eq(zero)) {      
+        const provider = await getProviderOrSigner();
+        const _ethBalance = await getEtherBalance(provider, null, true);
+        
+        const amountOfTokens = await getAmountOfTokensReceivedFromSwap(
+          swapAmountWei,
+          provider,
+          ethSelected,
+          _ethBalance,
+          reservedToken
+        );
+        settokenToBeReceivedAfterSwap(amountOfTokens);
+      }
+      else {
+        settokenToBeReceivedAfterSwap(zero);
+      }
+    
+    } catch (error) {
+      console.error(error);
+    }
+  }
 
   useEffect(() => {
     // if wallet is not connected, create a new instance of Web3Modal and connect the MetaMask wallet
@@ -279,6 +329,48 @@ export default function Home() {
         </div>
       );
     }
+    else{
+      return(<div>
+        <input
+          type="number"
+          placeholder="amount of Tokens"
+          onChange={async (e) => {
+            setSwapAmount(e.target.value || "0");
+            await _getAmountOfTokensReceivedFromSwap(e.target.value || "0");
+          }}
+          className={styles.input}
+          value={swapAmount}
+        />
+        <select
+          className={styles.select}
+          name="dropdown"
+          id="dropdown"
+          onChange={async (e) => {
+            //setEthSelected(!ethSelected);//setEthSelected();
+            setEthSelected(e.target.value === "BNB" ? true : false);
+            await _getAmountOfTokensReceivedFromSwap(0);
+            setSwapAmount("");//TODO: add logic reverse swaps
+          }}
+        >
+          <option value="BNB">BNB</option>
+          <option value="Token">Token</option>
+        </select>
+        <br />
+        <div className={styles.inputDiv}>
+          {
+            ethSelected 
+            ? `You will get ${utils.formatEther(tokenToBeReceivedAfterSwap)} Tokens` 
+            : `You will get ${utils.formatEther(tokenToBeReceivedAfterSwap)} BNB`
+          }
+        </div>
+        <button className={styles.button1} onClick={_swapTokens}>
+          swap
+        </button>
+
+      </div>)
+    }
+
+
   };
 
   return (
@@ -298,7 +390,17 @@ export default function Home() {
             onClick={() => {
               setLiquidityTab(true);
             }}
-          ></button>
+          >
+            Liquidity
+          </button>
+          <button
+            className={styles.button}
+            onClick={() => {
+              setLiquidityTab(false);
+            }}
+          >
+            swap
+          </button>
         </div>
       </div>
     </div>
