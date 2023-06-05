@@ -1,22 +1,18 @@
 syntax = "proto3";
-package hello.hello;
+package blog.blog;
 
 import "gogoproto/gogo.proto";
 import "google/api/annotations.proto";
 import "cosmos/base/query/v1beta1/pagination.proto";
-import "hello/hello/params.proto";
+import "blog/blog/params.proto";
 
-option go_package = "hello/x/hello/types";
+option go_package = "blog/x/blog/types";
 
 // Query defines the gRPC querier service.
 service Query {
   // Parameters queries the parameters of the module.
   rpc Params(QueryParamsRequest) returns (QueryParamsResponse) {
-    option (google.api.http).get = "/hello/hello/params";
-  }
-
-  rpc SayHello(QuerySayHelloRequest) returns (QuerySayHelloResponse) {
-    option (google.api.http).get = "/hello/hello/say_hello/{name}";
+    option (google.api.http).get = "/blog/blog/params";
   }
 }
 
@@ -27,12 +23,4 @@ message QueryParamsRequest {}
 message QueryParamsResponse {
   // params holds all the parameters of this module.
   Params params = 1 [(gogoproto.nullable) = false];
-}
-
-message QuerySayHelloRequest {
-  string name = 1;
-}
-
-message QuerySayHelloResponse {
-  string name = 1;
 }
